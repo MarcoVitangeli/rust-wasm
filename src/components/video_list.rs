@@ -1,9 +1,10 @@
-use std::rc::Rc;vi
-
+use std::rc::Rc;
 use web_sys::MouseEvent;
-use yew::{function_component, Html, html, use_node_ref, Callback, Properties, Reducible, use_reducer};
+use yew::{
+    function_component, html, use_node_ref, use_reducer, Callback, Html, Properties, Reducible,
+};
 
-#[derive(Properties,PartialEq)]
+#[derive(Properties, PartialEq)]
 pub struct Props {
     title: String,
     url: String,
@@ -26,7 +27,9 @@ struct ListState {
 
 impl Default for ListState {
     fn default() -> Self {
-        ListState { todos: Vec::<ListElem>::new() }
+        ListState {
+            todos: Vec::<ListElem>::new(),
+        }
     }
 }
 
@@ -39,7 +42,7 @@ impl Reducible for ListState {
                 let mut todos = self.todos.clone();
                 todos.push(new_todo);
                 Self { todos }.into()
-            },
+            }
             Action::Delete => {
                 let mut todos = self.todos.clone();
                 todos.remove(0);
@@ -62,17 +65,22 @@ pub fn video_list() -> Html {
         let todos = todos.clone();
 
         Callback::from(move |_: MouseEvent| {
-            let url_input = url_node_ref.cast::<web_sys::HtmlInputElement>()
-            .expect("url input ref do not attached to dom element")
-            .value();
-            
-            let title_input = title_node_ref.cast::<web_sys::HtmlInputElement>()
-            .expect("title input ref do not attached to dom element")
-            .value();
+            let url_input = url_node_ref
+                .cast::<web_sys::HtmlInputElement>()
+                .expect("url input ref do not attached to dom element")
+                .value();
+
+            let title_input = title_node_ref
+                .cast::<web_sys::HtmlInputElement>()
+                .expect("title input ref do not attached to dom element")
+                .value();
 
             // como console.log pero desde rust
             // web_sys::console::log_2(&url_input.into(), &title_input.into());
-            let elem = ListElem{title: title_input, url: url_input};
+            let elem = ListElem {
+                title: title_input,
+                url: url_input,
+            };
             todos.dispatch(Action::Add(elem));
         })
     };
@@ -87,10 +95,10 @@ pub fn video_list() -> Html {
         <div class="list_container">
             <form class="create_container">
                 <input type="text" placeholder="title of the video" required={true} ref={title_node_ref}/>
-                <input 
+                <input
                     ref={url_node_ref}
-                    type="url" 
-                    name="url" 
+                    type="url"
+                    name="url"
                     id="create_url"
                     placeholder="https://youtube.com/watch?v=asd2123ni2123"
                     pattern="https://.*"
