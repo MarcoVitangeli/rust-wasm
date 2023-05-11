@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::rc::Rc;vi
 
 use web_sys::MouseEvent;
 use yew::{function_component, Html, html, use_node_ref, Callback, Properties, Reducible, use_reducer};
@@ -103,7 +103,6 @@ pub fn video_list() -> Html {
                         {"delete"}
                     </button>
                 </span>
-                
             </form>
             <ul class="list_data">
             {
