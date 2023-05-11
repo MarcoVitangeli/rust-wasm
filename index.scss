@@ -58,6 +58,11 @@ input:focus {
     height: fit-content;
 }
 
+.button-bar {
+    display: flex;
+    gap: 10px;
+}
+
 #title {
     margin-bottom: 10px;
 }

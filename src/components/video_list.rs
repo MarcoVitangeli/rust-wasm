@@ -17,6 +17,7 @@ pub struct ListElem {
 
 enum Action {
     Add(ListElem),
+    Delete,
 }
 
 struct ListState {
@@ -38,6 +39,11 @@ impl Reducible for ListState {
                 let mut todos = self.todos.clone();
                 todos.push(new_todo);
                 Self { todos }.into()
+            },
+            Action::Delete => {
+                let mut todos = self.todos.clone();
+                todos.remove(0);
+                Self { todos }.into()
             }
         }
     }
@@ -50,7 +56,7 @@ pub fn video_list() -> Html {
     let url_node_ref = use_node_ref();
     let title_node_ref = use_node_ref();
 
-    let on_click = {
+    let on_click_add = {
         let url_node_ref = url_node_ref.clone();
         let title_node_ref = title_node_ref.clone();
         let todos = todos.clone();
@@ -70,6 +76,13 @@ pub fn video_list() -> Html {
             todos.dispatch(Action::Add(elem));
         })
     };
+
+    let on_click_delete = {
+        let todos = todos.clone();
+        Callback::from(move |_: MouseEvent| {
+            todos.dispatch(Action::Delete);
+        })
+    };
     html! {
         <div class="list_container">
             <form class="create_container">
@@ -82,9 +95,15 @@ pub fn video_list() -> Html {
                     placeholder="https://youtube.com/watch?v=asd2123ni2123"
                     pattern="https://.*"
                     required={true} />
-                <button class="create_button" type="button" onclick={on_click.clone()}>
+                <span class="button-bar">
+                    <button class="create_button" type="button" onclick={on_click_add}>
                     {"create"}
-                </button>
+                    </button>
+                    <button class="create_button delete_button" type="button" onclick={on_click_delete}>
+                        {"delete"}
+                    </button>
+                </span>
+                
             </form>
             <ul class="list_data">
             {
