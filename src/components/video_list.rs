@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use web_sys::MouseEvent;
-use yew::{function_component, Html, html, use_node_ref, Callback, Properties, use_state, Reducible};
+use yew::{function_component, Html, html, use_node_ref, Callback, Properties, Reducible, use_reducer};
 
 #[derive(Properties,PartialEq)]
 pub struct Props {
@@ -43,9 +43,9 @@ impl Reducible for ListState {
     }
 }
 
-#[function_component(Create)]
+#[function_component(LinkList)]
 pub fn video_list() -> Html {
-    let todos = use_state(|| Vec::<ListElem>::new());
+    let todos = use_reducer(ListState::default);
 
     let url_node_ref = use_node_ref();
     let title_node_ref = use_node_ref();
@@ -66,9 +66,8 @@ pub fn video_list() -> Html {
 
             // como console.log pero desde rust
             // web_sys::console::log_2(&url_input.into(), &title_input.into());
-            let new_todos = vec![ListElem{title: title_input, url: url_input}];
-            todos.set(new_todos);
-
+            let elem = ListElem{title: title_input, url: url_input};
+            todos.dispatch(Action::Add(elem));
         })
     };
     html! {
@@ -88,14 +87,16 @@ pub fn video_list() -> Html {
                 </button>
             </form>
             <ul class="list_data">
-                {todos
+            {
+                todos
+                    .to_owned()
+                    .todos
                     .iter()
-                    .map(|l| {
-                        html! {
-                            <ListElement title={l.title.as_str()} url={l.url.as_str()}/>
-                        }
-                    }).collect::<Html>()
-                }
+                    .map(|l| html! {
+                        <ListElement title={l.title.clone()} url={l.url.clone()}/>
+                    })
+                    .collect::<Html>()
+            }
             </ul>
         </div>
     }
@@ -104,7 +105,7 @@ pub fn video_list() -> Html {
 #[function_component(ListElement)]
 pub fn list_element(props: &Props) -> Html {
     html! {
-        <li class="list_elem">
+        <li key={props.title.clone()} class="list_elem">
             <span id="title">{format!("Title: {}", props.title)}</span>
             <span>{format!("URL: {}", props.url)}</span>
         </li>
